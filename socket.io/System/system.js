@@ -7,16 +7,30 @@ const ioServer = require("socket.io")(port);
 const { faker } = require("@faker-js/faker");
 const uuid = require("uuid");
 
-// Connect to the Socket.IO server as a client
 const host = `http://localhost:${port}`;
 const socket = ioClient.connect(host);
 
+// Connect to the Socket.IO server as a client
 socket.emit("start");
 
+// Add a queue object to store flights
+const queue = {
+    flights: {},
+};
+
+// Client-side code
 socket.on("new-flight", (payload) => {
-    socket.emit("new-flight", payload);
+    const id = uuid.v4();
+    queue.flights[id] = payload;
+    console.log("queue =", queue.flights[id]);
+    console.log(queue);
+    ioServer.emit("get-all", {
+        id,
+        payload: queue.flights[id],
+    });
 });
 
+// Server-side code
 ioServer.on("connection", (socket) => {
     console.log("Welcome, your socket id:", socket.id);
 

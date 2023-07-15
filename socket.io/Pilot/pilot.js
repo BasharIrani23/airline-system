@@ -10,6 +10,7 @@ const host = `http://localhost:${port}`;
 const mainSocket = ioClient.connect(host);
 
 mainSocket.on("new-flight", NewFlight);
+mainSocket.on("get-all", getAllFlights);
 
 function NewFlight(payload) {
     setTimeout(() => {
@@ -29,4 +30,10 @@ function NewFlight(payload) {
         payload.time = new Date();
         mainSocket.emit("Arrived", payload);
     }, 7000);
+}
+
+function getAllFlights(payload) {
+    setTimeout(() => {
+        console.log("this is the AllList to the pilot", payload);
+    }, 3000);
 }
